@@ -142,7 +142,7 @@ class Lyon1Mail {
       replyAll: replyAll,
       quoteOriginalText: true,
       replyToSimplifyReferences: true,
-    )..from = [
+    )..to = [
         MailAddress((sender != null) ? sender.name : emailAddress.name,
             (sender != null) ? sender.email : emailAddress.email)
       ];
