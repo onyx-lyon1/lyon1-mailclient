@@ -1,7 +1,6 @@
 // ignore_for_file: file_names, depend_on_referenced_packages
 
 import 'package:dartz/dartz.dart';
-import 'package:dartz/dartz_streaming.dart';
 import 'package:enough_mail/enough_mail.dart' hide Response;
 import 'package:http/http.dart' show Response;
 import 'package:lyon1mail/src/model/address.dart';
@@ -125,7 +124,6 @@ class Lyon1Mail {
   }
 
   Future<bool> reply({
-    Address? sender,
     bool replyAll = false,
     required int originalMessageId,
     required String subject,
@@ -142,10 +140,11 @@ class Lyon1Mail {
       replyAll: replyAll,
       quoteOriginalText: true,
       replyToSimplifyReferences: true,
-    )..to = [
-        MailAddress((sender != null) ? sender.name : emailAddress.name,
-            (sender != null) ? sender.email : emailAddress.email)
-      ];
+    );
+    print(messageBuilder.buildMimeMessage().to);
+    messageBuilder.addText(body);
+    print(messageBuilder.buildMimeMessage());
+
     messageBuilder.text = "$body\n\n${messageBuilder.text ?? ""}";
 
     final SmtpResponse response = await _smtpClient.sendMessage(
