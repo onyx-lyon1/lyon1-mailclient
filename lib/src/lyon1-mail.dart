@@ -136,16 +136,15 @@ class Lyon1Mail {
         .first;
     final MessageBuilder messageBuilder = MessageBuilder.prepareReplyToMessage(
       originalMessage,
-      originalMessage.from!.first,
+      MailAddress(emailAddress.name, emailAddress.email),
       replyAll: replyAll,
       quoteOriginalText: true,
       replyToSimplifyReferences: true,
     );
-    print(messageBuilder.buildMimeMessage().to);
-    messageBuilder.addText(body);
-    print(messageBuilder.buildMimeMessage());
-
-    messageBuilder.text = "$body\n\n${messageBuilder.text ?? ""}";
+    final textPlain = messageBuilder.getTextPlainPart()!;
+    textPlain.text = '$body\r\n${textPlain.text}';
+    final textHtml = messageBuilder.getTextHtmlPart()!;
+    textHtml.text = '<p>$body</p>\r\n${textHtml.text}';
 
     final SmtpResponse response = await _smtpClient.sendMessage(
       messageBuilder.buildMimeMessage(),
@@ -228,8 +227,8 @@ class Lyon1Mail {
       List<Address> addresses = [];
       for (var item in response.json()['Body']['ResultSet']) {
         addresses.add(Address(
-          item['EmailAddress']['EmailAddress'],
-          item['GivenName'] + " " + item['Surname'],
+          item['EmailAddress']['EmailAddress'] ?? "",
+          item['GivenName'] ?? "" + " " + item['Surname'] ?? "",
         ));
       }
       return addresses;
