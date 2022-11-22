@@ -143,8 +143,10 @@ class Lyon1Mail {
     );
     final textPlain = messageBuilder.getTextPlainPart()!;
     textPlain.text = '$body\r\n${textPlain.text}';
-    final textHtml = messageBuilder.getTextHtmlPart()!;
-    textHtml.text = '<p>$body</p>\r\n${textHtml.text}';
+    if (messageBuilder.getTextHtmlPart() != null) {
+      final textHtml = messageBuilder.getTextHtmlPart()!;
+      textHtml.text = '<p>$body</p>\r\n${textHtml.text}';
+    }
 
     final SmtpResponse response = await _smtpClient.sendMessage(
       messageBuilder.buildMimeMessage(),

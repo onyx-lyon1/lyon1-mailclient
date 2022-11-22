@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:enough_mail/enough_mail.dart';
 
@@ -62,6 +63,20 @@ class Mail {
       }
     }
     return fileNames;
+  }
+
+  List<int> getAttachment(String fileName) {
+    final List<MimePart> parts = _originalMessage.allPartsFlat;
+    for (final MimePart mp in parts) {
+      if (mp.decodeFileName() == fileName) {
+        Uint8List? content = mp.decodeContentBinary();
+        if (content == null) {
+          throw Exception("Unable to get attachment");
+        }
+        return content.toList();
+      }
+    }
+    throw Exception("Unable to get attachment");
   }
 
   String getBody({
