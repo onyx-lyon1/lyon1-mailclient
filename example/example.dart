@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:lyon1mail/lyon1mail.dart';
 
 void main() async {
@@ -8,12 +7,12 @@ void main() async {
     // handle gracefully
   }
 
-  final Option<List<Mail>> emailOpt = await mailClient.fetchMessages(15);
-  if (emailOpt.isNone()) {
+  final List<Mail>? emailOpt = await mailClient.fetchMessages(15);
+  if (emailOpt == null || emailOpt.isEmpty) {
     // No emails
   }
 
-  for (final Mail mail in emailOpt.toIterable().first) {
+  for (final Mail mail in emailOpt!) {
     print(
         "${mail.getSender()} sent ${mail.getSubject()} @${mail.getDate().toIso8601String()}");
     print("\tseen: ${mail.isSeen()}");

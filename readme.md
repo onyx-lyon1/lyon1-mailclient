@@ -9,12 +9,12 @@ if (!await mailClient.login()) {
     // handle gracefully
 }
 
-final Option<List<Mail>> emailOpt = await mailClient.fetchMessages(15);
-if (emailOpt.isNone()) {
+final List<Mail>? emailOpt = await mailClient.fetchMessages(15);
+if (emailOpt == null || emailOpt.isEmpty) {
     // No emails
 }
 
-for (final Mail mail in emailOpt.toIterable().first) {
+for (final Mail mail in emailOpt) {
     print("${mail.getSender()} sent ${mail.getSubject()} @${mail.getDate().toIso8601String()}");
     print("\tseen: ${mail.isSeen()}");
     print("\t${mail.getBody(excerpt: true, excerptLength: 50)}");

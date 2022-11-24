@@ -1,6 +1,5 @@
 // ignore_for_file: file_names, depend_on_referenced_packages
 
-import 'package:dartz/dartz.dart';
 import 'package:enough_mail/enough_mail.dart' hide Response;
 import 'package:http/http.dart' show Response;
 import 'package:lyon1mail/src/model/address.dart';
@@ -76,14 +75,14 @@ class Lyon1Mail {
     return _client.isLoggedIn;
   }
 
-  Future<Option<List<Mail>>> fetchMessages(
+  Future<List<Mail>?> fetchMessages(
     final int end, {
     int? start,
     bool unreadOnly = false,
     bool hasAttachmentOnly = false,
   }) async {
     if (!_client.isLoggedIn) {
-      return None();
+      return null;
     }
 
     final Mailbox mailbox = await _client.selectInbox();
@@ -118,9 +117,9 @@ class Lyon1Mail {
       mails.add(Mail(email));
     }
 
-    return Some(mails.reversed
+    return mails.reversed
         .where((mail) => mail.hasAttachments() || !hasAttachmentOnly)
-        .toList());
+        .toList();
   }
 
   Future<bool> reply({
