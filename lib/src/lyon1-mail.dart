@@ -229,7 +229,7 @@ class Lyon1Mail {
       for (var item in response.json()['Body']['ResultSet']) {
         addresses.add(Address(
           (item['EmailAddress'] ?? {})['EmailAddress'] ?? "",
-          item['GivenName'] ?? "" + " " + item['Surname'] ?? "",
+          (item['GivenName'] ?? "") + " " + (item['Surname'] ?? ""),
         ));
       }
       return addresses;
