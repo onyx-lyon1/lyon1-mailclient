@@ -57,9 +57,6 @@ class Mail {
     for (final MimePart mp in parts) {
       if (mp.decodeFileName() != null) {
         fileNames.add(mp.decodeFileName() ?? "");
-
-        // var myFile = File(mp.decodeFileName() ?? "");
-        // myFile.writeAsBytes(mp.decodeContentBinary()?.toList() ?? []);
       }
     }
     return fileNames;

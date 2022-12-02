@@ -1,5 +1,7 @@
 // ignore_for_file: file_names, depend_on_referenced_packages
 
+import 'dart:io';
+
 import 'package:enough_mail/enough_mail.dart' hide Response;
 import 'package:http/http.dart' show Response;
 import 'package:lyon1mail/src/model/address.dart';
@@ -127,6 +129,7 @@ class Lyon1Mail {
     required int originalMessageId,
     required String subject,
     required String body,
+    List<File>? attachments,
   }) async {
     final MimeMessage originalMessage = (await _client.fetchMessage(
             originalMessageId,
@@ -147,6 +150,13 @@ class Lyon1Mail {
       textHtml.text = '<p>$body</p>\r\n${textHtml.text}';
     }
 
+    for (final File attachment in attachments ?? []) {
+      await messageBuilder.addFile(
+        attachment,
+        MediaType.guessFromFileName(attachment.path.split("/").last),
+      );
+    }
+
     final SmtpResponse response = await _smtpClient.sendMessage(
       messageBuilder.buildMimeMessage(),
     );
@@ -159,6 +169,7 @@ class Lyon1Mail {
     required List<Address> recipients,
     required String subject,
     required String body,
+    List<File>? attachments,
   }) async {
     final MessageBuilder messageBuilder =
         MessageBuilder.prepareMultipartAlternativeMessage()
@@ -169,6 +180,13 @@ class Lyon1Mail {
                 (sender != null) ? sender.email : emailAddress.email)
           ]
           ..to = recipients.map((e) => MailAddress(e.name, e.email)).toList();
+
+    for (final File attachment in attachments ?? []) {
+      await messageBuilder.addFile(
+        attachment,
+        MediaType.guessFromFileName(attachment.path.split("/").last),
+      );
+    }
 
     final SmtpResponse response = await _smtpClient.sendMessage(
       messageBuilder.buildMimeMessage(),

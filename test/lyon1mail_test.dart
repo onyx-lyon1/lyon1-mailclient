@@ -49,20 +49,18 @@ void main() {
 
   test('fetchMessages 10 emails while being logged in', () async {
     await mailClient.login();
-    final List<Mail> mails =
-        (await mailClient.fetchMessages(10)).getOrElse(() => []);
+    final List<Mail> mails = (await mailClient.fetchMessages(10)) ?? [];
     expect(mails.length, equals(10));
     await mailClient.logout();
   });
 
   test('fetch 10 messages without being logged in', () async {
-    expect((await mailClient.fetchMessages(10)).isNone(), equals(true));
+    expect((await mailClient.fetchMessages(10)) == null, equals(true));
   });
 
   test('toggle read status of latest email', () async {
     await mailClient.login();
-    final List<Mail> mails =
-        (await mailClient.fetchMessages(10)).getOrElse(() => []);
+    final List<Mail> mails = (await mailClient.fetchMessages(10)) ?? [];
 
     final bool isFirstMailSeen = mails.first.isSeen();
 
@@ -72,8 +70,7 @@ void main() {
       await mailClient.markAsRead(mails.first.getSequenceId()!);
     }
 
-    expect(
-        (await mailClient.fetchMessages(10)).getOrElse(() => []).first.isSeen(),
+    expect((await mailClient.fetchMessages(10)) ?? [].first.isSeen(),
         !isFirstMailSeen);
 
     await mailClient.logout();
@@ -84,14 +81,14 @@ void main() {
 
     await mailClient.login();
     final List<Mail> mailsBeforeDeletion =
-        (await mailClient.fetchMessages(1)).getOrElse(() => []);
+        (await mailClient.fetchMessages(1)) ?? [];
     expect(mailsBeforeDeletion.isNotEmpty, true);
 
     final int latestMessageId = mailsBeforeDeletion.first.getSequenceId()!;
     await mailClient.delete(latestMessageId);
 
     final List<Mail> mailsAfterDeletion =
-        (await mailClient.fetchMessages(1)).getOrElse(() => []);
+        (await mailClient.fetchMessages(1)) ?? [];
     expect(mailsAfterDeletion.isNotEmpty, true);
     expect(mailsAfterDeletion.first.getSequenceId() != latestMessageId, true);
     await mailClient.logout();
@@ -106,7 +103,7 @@ void main() {
 
     await mailClient.login();
     final List<Mail> mailsBeforeDeletion =
-        (await mailClient.fetchMessages(1)).getOrElse(() => []);
+        (await mailClient.fetchMessages(1)) ?? [];
     expect(mailsBeforeDeletion.isNotEmpty, true);
 
     final bool responseStatus = await mailClient.reply(
@@ -122,7 +119,7 @@ void main() {
     await mailClient.delete(latestMessageId);
 
     final List<Mail> mailsAfterDeletion =
-        (await mailClient.fetchMessages(1)).getOrElse(() => []);
+        (await mailClient.fetchMessages(1)) ?? [];
     expect(mailsAfterDeletion.isNotEmpty, true);
     expect(mailsAfterDeletion.first.getSequenceId() == latestMessageId, true);
     expect(
@@ -145,14 +142,14 @@ void main() {
 
     await mailClient.login();
     final List<Mail> mailsBeforeDeletion =
-        (await mailClient.fetchMessages(1)).getOrElse(() => []);
+        (await mailClient.fetchMessages(1)) ?? [];
     expect(mailsBeforeDeletion.isNotEmpty, true);
 
     final int latestMessageId = mailsBeforeDeletion.first.getSequenceId()!;
     await mailClient.delete(latestMessageId);
 
     final List<Mail> mailsAfterDeletion =
-        (await mailClient.fetchMessages(1)).getOrElse(() => []);
+        (await mailClient.fetchMessages(1)) ?? [];
     expect(mailsAfterDeletion.isNotEmpty, true);
     expect(mailsAfterDeletion.first.getSequenceId() != latestMessageId, true);
     await mailClient.logout();
