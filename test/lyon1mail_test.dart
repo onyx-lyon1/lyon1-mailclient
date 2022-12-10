@@ -11,7 +11,7 @@ void main() {
   Future<bool> sendDummyMail(final String recipientEmail) async {
     await mailClient.login();
     return await mailClient.sendEmail(
-      sender: Address(env['email']!, 'nom de test'),
+      sender: Address(env['EMAIL']!, 'nom de test'),
       recipients: [
         Address(recipientEmail, 'nom de test 2'),
       ],
@@ -24,16 +24,11 @@ void main() {
   late String password;
   late String emailAddress;
   setUpAll(() {
-    env.load(['test/.env']);
+    env.load();
 
-    username = Platform.environment['username'] ?? "";
-    password = Platform.environment['password'] ?? "";
-    emailAddress = Platform.environment['email'] ?? "";
-    if (env.isEveryDefined(['username', 'password', 'email'])) {
-      username = env['username'] ?? "";
-      password = env['password'] ?? "";
-      emailAddress = env['email'] ?? "";
-    }
+    username = env['USERNAME'] ?? "";
+    password = env['PASSWORD'] ?? "";
+    emailAddress = env['EMAIL'] ?? "";
 
     if (username.isEmpty || password.isEmpty) {
       fail("username or password were empty. check your envt variables");
@@ -70,14 +65,14 @@ void main() {
       await mailClient.markAsRead(mails.first.getSequenceId()!);
     }
 
-    expect((await mailClient.fetchMessages(10)) ?? [].first.isSeen(),
+    expect(((await mailClient.fetchMessages(10)) ?? []).first.isSeen(),
         !isFirstMailSeen);
 
     await mailClient.logout();
   });
 
   test('send one email to self', () async {
-    await sendDummyMail(env['email']!);
+    await sendDummyMail(emailAddress);
 
     await mailClient.login();
     final List<Mail> mailsBeforeDeletion =
@@ -95,11 +90,11 @@ void main() {
   });
 
   test('send one email to another person', () async {
-    await sendDummyMail(env['other_email']!);
+    await sendDummyMail(env['OTHER_EMAIL']!);
   });
 
   test('reply one email to self', () async {
-    await sendDummyMail(env['email']!);
+    await sendDummyMail(emailAddress);
 
     await mailClient.login();
     final List<Mail> mailsBeforeDeletion =
@@ -138,7 +133,7 @@ void main() {
 
   test('delete latest email', () async {
     await sendDummyMail(
-        env['email']!); // to make sure we dont delete important mails :)
+        emailAddress); // to make sure we dont delete important mails :)
 
     await mailClient.login();
     final List<Mail> mailsBeforeDeletion =
