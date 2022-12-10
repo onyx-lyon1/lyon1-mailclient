@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dotenv/dotenv.dart';
 import 'package:lyon1mail/lyon1mail.dart';
 import 'package:test/test.dart';
