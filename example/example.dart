@@ -18,9 +18,9 @@ void main() async {
     print("\tseen: ${mail.isSeen}");
     print("\t${mail.getBody(excerpt: true, excerptLength: 50)}");
     print("\thasPJ: ${mail.hasAttachments}");
-    mail.getAttachmentsNames.forEach((fname) {
+    for (var fname in mail.getAttachmentsNames) {
       print("\t\t$fname");
-    });
+    }
   }
 
   await mailClient.logout();
