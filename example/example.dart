@@ -14,11 +14,11 @@ void main() async {
 
   for (final Mail mail in emailOpt!) {
     print(
-        "${mail.getSender()} sent ${mail.getSubject()} @${mail.getDate().toIso8601String()}");
-    print("\tseen: ${mail.isSeen()}");
+        "${mail.getSender} sent ${mail.getSubject} @${mail.getDate.toIso8601String()}");
+    print("\tseen: ${mail.isSeen}");
     print("\t${mail.getBody(excerpt: true, excerptLength: 50)}");
-    print("\thasPJ: ${mail.hasAttachments()}");
-    mail.getAttachmentsNames().forEach((fname) {
+    print("\thasPJ: ${mail.hasAttachments}");
+    mail.getAttachmentsNames.forEach((fname) {
       print("\t\t$fname");
     });
   }

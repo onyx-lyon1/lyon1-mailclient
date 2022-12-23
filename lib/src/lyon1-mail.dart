@@ -120,7 +120,7 @@ class Lyon1Mail {
     }
 
     return mails.reversed
-        .where((mail) => mail.hasAttachments() || !hasAttachmentOnly)
+        .where((mail) => mail.hasAttachments || !hasAttachmentOnly)
         .toList();
   }
 
@@ -196,35 +196,14 @@ class Lyon1Mail {
     return response.isOkStatus;
   }
 
-  // untested yet
-  Future<void> delete(final int id) async {
+  Future<MessageSequence> _idToSequence(final int id) async {
     if (!_client.isLoggedIn) {
-      return;
-    }
-    final MessageSequence sequence = MessageSequence();
-    sequence.add(id);
-    _client.markDeleted(sequence);
-    _client.expunge();
-  }
-
-  Future<void> markAsRead(final int id) async {
-    if (!_client.isLoggedIn) {
-      return;
+      throw "Not logged in";
     }
     await _client.selectInbox();
     final MessageSequence sequence = MessageSequence();
     sequence.add(id);
-    _client.markSeen(sequence);
-  }
-
-  Future<void> markAsUnread(final int id) async {
-    if (!_client.isLoggedIn) {
-      return;
-    }
-    await _client.selectInbox();
-    final MessageSequence sequence = MessageSequence();
-    sequence.add(id);
-    _client.markUnseen(sequence);
+    return sequence;
   }
 
   Future<List<Address>> resolveContact(String query) async {
@@ -253,6 +232,32 @@ class Lyon1Mail {
       return addresses;
     }
     return [];
+  }
+
+  Future<void> delete(final int id) async {
+    final MessageSequence sequence = await _idToSequence(id);
+    _client.markDeleted(sequence);
+    _client.expunge();
+  }
+
+  Future<void> markAsRead(final int id) async {
+    final MessageSequence sequence = await _idToSequence(id);
+    _client.markSeen(sequence);
+  }
+
+  Future<void> markAsUnread(final int id) async {
+    final MessageSequence sequence = await _idToSequence(id);
+    _client.markUnseen(sequence);
+  }
+
+  Future<void> markAsFlagged(final int id) async {
+    final MessageSequence sequence = await _idToSequence(id);
+    _client.markFlagged(sequence);
+  }
+
+  Future<void> unmarkAsFlagged(final int id) async {
+    final MessageSequence sequence = await _idToSequence(id);
+    _client.markUnflagged(sequence);
   }
 
   Future<void> logout() async {

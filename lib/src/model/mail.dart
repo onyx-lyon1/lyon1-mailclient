@@ -10,11 +10,11 @@ class Mail {
 
   MimeMessage get getOriginalMessage => _originalMessage;
 
-  String getSubject() {
+  String get getSubject {
     return _originalMessage.decodeSubject() ?? "";
   }
 
-  List<String> getRecipients() {
+  List<String> get getRecipients {
     const List<String> recipients = [];
     for (MailAddress m in _originalMessage.cc ?? []) {
       recipients.add(m.email);
@@ -22,11 +22,11 @@ class Mail {
     return recipients;
   }
 
-  String getSender() {
+  String get getSender {
     return _originalMessage.fromEmail ?? "n/a";
   }
 
-  String getReceiver() {
+  String get getReceiver {
     String receiver = "";
     for (MailAddress i in _originalMessage.to!) {
       receiver += "${i.email}, ";
@@ -35,23 +35,27 @@ class Mail {
     return receiver;
   }
 
-  DateTime getDate() {
+  DateTime get getDate {
     return _originalMessage.decodeDate() ?? DateTime.now();
   }
 
-  bool isSeen() {
+  bool get isSeen {
     return _originalMessage.hasFlag(MessageFlags.seen);
   }
 
-  bool hasAttachments() {
+  bool get isFlagged {
+    return _originalMessage.isFlagged;
+  }
+
+  bool get hasAttachments {
     return _originalMessage.hasAttachments();
   }
 
-  int? getSequenceId() {
+  int? get getSequenceId {
     return _originalMessage.sequenceId;
   }
 
-  List<String> getAttachmentsNames() {
+  List<String> get getAttachmentsNames {
     final List<String> fileNames = [];
     final List<MimePart> parts = _originalMessage.allPartsFlat;
     for (final MimePart mp in parts) {

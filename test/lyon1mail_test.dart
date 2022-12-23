@@ -55,16 +55,46 @@ void main() {
     await mailClient.login();
     final List<Mail> mails = (await mailClient.fetchMessages(10)) ?? [];
 
-    final bool isFirstMailSeen = mails.first.isSeen();
+    final bool isFirstMailSeen = mails.first.isSeen;
 
     if (isFirstMailSeen) {
-      await mailClient.markAsUnread(mails.first.getSequenceId()!);
+      await mailClient.markAsUnread(mails.first.getSequenceId!);
     } else {
-      await mailClient.markAsRead(mails.first.getSequenceId()!);
+      await mailClient.markAsRead(mails.first.getSequenceId!);
     }
 
-    expect(((await mailClient.fetchMessages(10)) ?? []).first.isSeen(),
+    expect(((await mailClient.fetchMessages(10)) ?? []).first.isSeen,
         !isFirstMailSeen);
+
+    if (isFirstMailSeen) {
+      await mailClient.markAsRead(mails.first.getSequenceId!);
+    } else {
+      await mailClient.markAsUnread(mails.first.getSequenceId!);
+    }
+
+    await mailClient.logout();
+  });
+
+  test('toggle flag status of latest email', () async {
+    await mailClient.login();
+    final List<Mail> mails = (await mailClient.fetchMessages(10)) ?? [];
+
+    final bool isFirstMailFlaged = mails.first.isFlagged;
+
+    if (isFirstMailFlaged) {
+      await mailClient.unmarkAsFlagged(mails.first.getSequenceId!);
+    } else {
+      await mailClient.markAsFlagged(mails.first.getSequenceId!);
+    }
+
+    expect(((await mailClient.fetchMessages(10)) ?? []).first.isFlagged,
+        !isFirstMailFlaged);
+
+    if (isFirstMailFlaged) {
+      await mailClient.markAsFlagged(mails.first.getSequenceId!);
+    } else {
+      await mailClient.unmarkAsFlagged(mails.first.getSequenceId!);
+    }
 
     await mailClient.logout();
   });
@@ -77,13 +107,13 @@ void main() {
         (await mailClient.fetchMessages(1)) ?? [];
     expect(mailsBeforeDeletion.isNotEmpty, true);
 
-    final int latestMessageId = mailsBeforeDeletion.first.getSequenceId()!;
+    final int latestMessageId = mailsBeforeDeletion.first.getSequenceId!;
     await mailClient.delete(latestMessageId);
 
     final List<Mail> mailsAfterDeletion =
         (await mailClient.fetchMessages(1)) ?? [];
     expect(mailsAfterDeletion.isNotEmpty, true);
-    expect(mailsAfterDeletion.first.getSequenceId() != latestMessageId, true);
+    expect(mailsAfterDeletion.first.getSequenceId != latestMessageId, true);
     await mailClient.logout();
   });
 
@@ -100,7 +130,7 @@ void main() {
     expect(mailsBeforeDeletion.isNotEmpty, true);
 
     final bool responseStatus = await mailClient.reply(
-      originalMessageId: mailsBeforeDeletion.first.getSequenceId()!,
+      originalMessageId: mailsBeforeDeletion.first.getSequenceId!,
       body: "response body",
       subject: "response subject",
       replyAll: false,
@@ -108,13 +138,13 @@ void main() {
 
     expect(responseStatus, true);
 
-    final int latestMessageId = mailsBeforeDeletion.first.getSequenceId()!;
+    final int latestMessageId = mailsBeforeDeletion.first.getSequenceId!;
     await mailClient.delete(latestMessageId);
 
     final List<Mail> mailsAfterDeletion =
         (await mailClient.fetchMessages(1)) ?? [];
     expect(mailsAfterDeletion.isNotEmpty, true);
-    expect(mailsAfterDeletion.first.getSequenceId() == latestMessageId, true);
+    expect(mailsAfterDeletion.first.getSequenceId == latestMessageId, true);
     expect(
         mailsAfterDeletion.first.getBody(excerpt: false).contains(
             mailsBeforeDeletion.first.getBody(excerpt: false).substring(
@@ -138,13 +168,13 @@ void main() {
         (await mailClient.fetchMessages(1)) ?? [];
     expect(mailsBeforeDeletion.isNotEmpty, true);
 
-    final int latestMessageId = mailsBeforeDeletion.first.getSequenceId()!;
+    final int latestMessageId = mailsBeforeDeletion.first.getSequenceId!;
     await mailClient.delete(latestMessageId);
 
     final List<Mail> mailsAfterDeletion =
         (await mailClient.fetchMessages(1)) ?? [];
     expect(mailsAfterDeletion.isNotEmpty, true);
-    expect(mailsAfterDeletion.first.getSequenceId() != latestMessageId, true);
+    expect(mailsAfterDeletion.first.getSequenceId != latestMessageId, true);
     await mailClient.logout();
   });
 }
