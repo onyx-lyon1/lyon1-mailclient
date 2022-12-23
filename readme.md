@@ -1,6 +1,8 @@
 # A mail client for Lyon1
 Reliably fetch emails from https://mail.univ-lyon1.fr
 
+![test result](https://github.com/onyx-lyon1/lyon1-mailclient/actions/workflows/dart.yml/badge.svg)
+
 ## Example
 ```dart
 final Lyon1Mail mailClient = Lyon1Mail("p1234567", "a_valid_password");
